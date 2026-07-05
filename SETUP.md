@@ -151,6 +151,8 @@ cd cv && lualatex main_<company>.tex && cd ..
 cd cover_letters && xelatex cover_<company>_<role>.tex && cd ..
 ```
 
+These commands apply to the stock templates (moderncv CV, `cover.cls` cover letter). If you'd rather use your own LaTeX template, run `/add-template` — it captures the template's compile engine, fonts, style rules, and page limit, test-compiles it, and wires it into `/apply`. See the "LaTeX templates" section in the README.
+
 ## Troubleshooting
 
 ### "salary_data.json not found"
