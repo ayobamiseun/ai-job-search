@@ -51,6 +51,7 @@ cv/main_*.tex
 cv/*.txt
 cover_letters/cover_*.tex
 cover_letters/Cover_*.tex
+!cover_letters/cover_example.tex
 
 # documents/ subfolder contents are personal — only README and folder structure are tracked
 documents/cv/**

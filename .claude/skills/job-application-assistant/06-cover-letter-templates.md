@@ -99,7 +99,9 @@ The font wrapper is mandatory — if you just move `\begin{itemize}` outside `\l
 \lettercontent{I look forward to hearing from you.}
 
 \begin{flushright}
-\closing{Kind regards,\\}
+% No trailing \\ inside \closing{} - cover.cls appends its own \\, and a
+% doubled break triggers "! LaTeX Error: There's no line here to end."
+\closing{Kind regards,}
 
 \signature{[YOUR_NAME]}
 \end{flushright}

@@ -4,6 +4,8 @@
 
 # AI Job Search
 
+[![CI](https://github.com/MadsLorentzen/ai-job-search/actions/workflows/ci.yml/badge.svg)](https://github.com/MadsLorentzen/ai-job-search/actions/workflows/ci.yml)
+
 An AI-powered job application framework built on [Claude Code](https://claude.com/claude-code). Fork it, fill in your profile, and let Claude evaluate job postings, tailor your CV, write cover letters, and prepare you for interviews.
 
 > Note: This is an independent open-source project and is not affiliated with, endorsed by, sponsored by, or maintained by Anthropic. Anthropic and Claude Code are referenced only to describe the toolchain this workflow uses.
@@ -148,6 +150,7 @@ ai-job-search/
 │   └── main_example.tex               # moderncv LaTeX template
 ├── cover_letters/
 │   ├── cover.cls                      # Custom cover letter LaTeX class
+│   ├── cover_example.tex              # Example cover letter (structural reference + CI smoke test)
 │   └── OpenFonts/                     # Lato + Raleway fonts
 ├── templates/                         # Custom templates registered via /add-template
 │   └── README.md                      # Folder layout instructions
@@ -158,9 +161,11 @@ ai-job-search/
 │   ├── diplomas/                      # Degree certificates and transcripts
 │   ├── references/                    # Reference letters
 │   └── applications/                  # Past application records (<company>_<role>/)
+├── .github/workflows/ci.yml           # CI: LaTeX smoke compiles, skill lint, CLI typechecks
 ├── salary_lookup.py                   # Salary benchmarking tool (BYO data)
 ├── tools/
 │   ├── convert_salary_excel.py        # Convert salary Excel to JSON
+│   ├── lint_skills.py                 # CI lint for skills, commands, settings.json
 │   └── README_SALARY_TOOL.md          # Salary tool setup instructions
 ├── job_scraper/                       # Scraper state (seen jobs, results)
 ├── upskill/                           # /upskill report output (markdown reports per run)

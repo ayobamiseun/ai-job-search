@@ -1,0 +1,108 @@
+# CI for the framework itself: LaTeX smoke compiles, skill/command lint,
+# CLI typechecks, and (upstream only) placeholder integrity.
+#
+# Fork-friendly by design: forks personalize CLAUDE.md, the skill files, and
+# cv/main_example.tex via /setup, so the placeholder-integrity job and the
+# exact page-count assertions run only on the upstream template repo. Compile
+# success and lint correctness are asserted everywhere.
+#
+# Deliberately NOT here: live smoke tests of the job-portal CLIs. They hit
+# real portals (network-flaky, and the linkedin-search skill is personal-use
+# only per its own ToS warning - CI-automated requests would violate that).
+# CLIs get typechecked instead; live testing stays a local, on-demand step.
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint skills, commands, settings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python tools/lint_skills.py
+
+  latex-smoke:
+    name: Compile example CV and cover letter
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile CV example (lualatex)
+        run: |
+          cd cv
+          lualatex -interaction=nonstopmode main_example.tex
+          test -f main_example.pdf
+          if grep -q '^!' main_example.log; then
+            echo '::error::lualatex reported errors compiling cv/main_example.tex'
+            grep -A3 '^!' main_example.log
+            exit 1
+          fi
+      - name: Compile cover letter example (xelatex)
+        run: |
+          cd cover_letters
+          xelatex -interaction=nonstopmode cover_example.tex
+          test -f cover_example.pdf
+          if grep -q '^!' cover_example.log; then
+            echo '::error::xelatex reported errors compiling cover_letters/cover_example.tex'
+            grep -A3 '^!' cover_example.log
+            exit 1
+          fi
+      - name: Assert exact page counts (upstream template only)
+        if: github.repository == 'MadsLorentzen/ai-job-search'
+        run: |
+          grep -q 'Output written on main_example.pdf (2 pages' cv/main_example.log \
+            || { echo '::error::cv/main_example.tex no longer compiles to exactly 2 pages'; exit 1; }
+          grep -q 'Output written on cover_example.pdf (1 page' cover_letters/cover_example.log \
+            || { echo '::error::cover_letters/cover_example.tex no longer compiles to exactly 1 page'; exit 1; }
+
+  cli-typecheck:
+    name: Typecheck ${{ matrix.tool }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tool:
+          - jobbank-search
+          - jobdanmark-search
+          - jobindex-search
+          - jobnet-search
+          - linkedin-search
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+        working-directory: .agents/skills/${{ matrix.tool }}/cli
+      - run: bun run typecheck
+        working-directory: .agents/skills/${{ matrix.tool }}/cli
+
+  placeholder-integrity:
+    name: Placeholder integrity (upstream template only)
+    if: github.repository == 'MadsLorentzen/ai-job-search'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tracked template files must keep their placeholder tokens
+        run: |
+          fail=0
+          check() {
+            if ! grep -q "$2" "$1"; then
+              echo "::error file=$1::expected placeholder token $2 - personal data may have been committed"
+              fail=1
+            fi
+          }
+          check CLAUDE.md '\[YOUR_NAME\]'
+          check cv/main_example.tex '\[YOUR_NAME\]'
+          check cover_letters/cover_example.tex '\[YOUR NAME\]'
+          check .claude/skills/job-application-assistant/01-candidate-profile.md '<!-- SETUP'
+          check .claude/skills/job-application-assistant/04-job-evaluation.md '\[YOUR_PRIMARY_SKILLS\]'
+          exit $fail
