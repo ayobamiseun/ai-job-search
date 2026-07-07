@@ -280,3 +280,5 @@ List the files written:
 - `cover_letters/cover_<company>_<role>.tex`
 
 Tell the user: "Both files are ready for your review. Open them to check the final output before compiling."
+
+Also mention: once they have actually submitted the application, `/outcome <company>` logs it in the tracker and starts the per-application record that `/setup` later uses to calibrate the fit framework.

@@ -99,6 +99,8 @@ Reference letters from former managers, supervisors, or collaborators.
 
 A record of past job applications. Each subfolder is one application.
 
+You can maintain these folders by hand, or let the **`/outcome`** command do it: it records progress updates and final results conversationally, archives the submitted drafts and the posting text, keeps `outcome.md` in the format below, and updates `job_search_tracker.csv` in the same step.
+
 **Subfolder naming:** `<company>_<role>` — lowercase, underscores for spaces.
 
 Examples:
@@ -122,7 +124,7 @@ applications/
 ```markdown
 # Outcome: <Company> — <Role>
 
-**Status:** hired | offer_declined | rejected | no_response | interview_only
+**Status:** in_progress | hired | offer_declined | rejected | no_response | interview_only
 
 **Date resolved:** YYYY-MM-DD
 
@@ -138,6 +140,8 @@ What happened? What feedback did you receive (if any)?
 What would you do differently?
 Any signal about what they valued or didn't?
 ```
+
+`in_progress` marks an application that is still open (used by `/outcome` for interview-stage updates before a resolution). `/setup`'s calibration draws conclusions only from applications with a final status.
 
 **What `/setup` learns from outcome.md:**
 - Which role types and companies have led to interviews (signals strong fit areas)

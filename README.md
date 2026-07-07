@@ -99,8 +99,9 @@ This runs the full workflow: evaluate fit, draft CV + cover letter, review with 
 
 ## Other commands
 
-`/setup`, `/scrape`, and `/apply` form the core workflow. Five more commands extend it once your profile is in place:
+`/setup`, `/scrape`, and `/apply` form the core workflow. Six more commands extend it once your profile is in place:
 
+- **`/outcome`** records what happened to an application - interview stages, offers, rejections, silence. It archives the submitted CV, cover letter, and posting text into `documents/applications/<company>_<role>/`, keeps `outcome.md` in the format `/setup` Path A parses, and updates the tracker. Once a few applications resolve, it points you back to `/setup` to calibrate the fit framework from what actually got interviews.
 - **`/rank`** bridges `/scrape` and `/apply`: it batch-scores all newly scraped postings against the fit framework (parallel agents fetch each posting and score the five evaluation dimensions) and returns a ranked shortlist with honest per-job strengths and gaps. Deal-breakers veto, deadlines get urgency flags, dead postings get marked expired. Pick a number and it hands off to the full `/apply` workflow.
 - **`/expand`** enriches your profile by scanning public sources you've already linked in it (GitHub repos, portfolio site, Kaggle, Google Scholar) and looking up syllabi for named courses and certifications. Discovered competencies are added to your profile with a source tag. Useful right after `/setup` to surface skills that documents alone don't make explicit.
 - **`/upskill`** analyzes the gap between your profile and your tracked job postings (or a single posting via `/upskill <URL>`). Produces a prioritized heatmap of skill gaps and a learning plan with web-searched study resources and time estimates. Useful for career planning between applications.
@@ -122,6 +123,7 @@ ai-job-search/
 │   │   ├── add-template.md            # /add-template register custom LaTeX templates
 │   │   ├── add-portal.md              # /add-portal generate a job-portal search skill for your market
 │   │   ├── rank.md                    # /rank triage scraped jobs into a ranked shortlist
+│   │   ├── outcome.md                 # /outcome record application results, archive materials
 │   │   └── reset.md                   # /reset wipe profile data or documents folder
 │   ├── skills/
 │   │   ├── job-application-assistant/  # Core application skill

@@ -104,7 +104,7 @@ Read each document found in Step A1. Process subfolders in this order: `cv/`, `l
 - `job_posting.md`: role title, company, required skills, experience level, sector, role type
 - `cover_letter.tex`: opening structure, body structure, bullet style, closing, recurring phrases
 - `cv_draft.tex`: profile statement, section ordering, framing for this role type
-- `outcome.md`: status (hired/rejected/no_response/interview_only), interview stages, notes
+- `outcome.md`: status (in_progress/hired/offer_declined/rejected/no_response/interview_only), interview stages, notes. Skip `in_progress` applications for calibration — they have no final signal yet.
 
 After reading, proceed to Step A4 without intermediate output. The user sees a complete picture in Step A6.
 
