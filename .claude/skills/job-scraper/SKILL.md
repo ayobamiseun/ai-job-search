@@ -75,7 +75,7 @@ For each new job, do a rapid fit check (NOT the full evaluation from `04-job-eva
       "url": "...",
       "first_seen": "YYYY-MM-DD",
       "fit": "high/medium/low",
-      "status": "new/skipped/evaluated"
+      "status": "new/skipped/evaluated/ranked/expired"
     }
   }
 }
@@ -106,6 +106,8 @@ After presenting, ask:
 > "Want me to evaluate any of these in detail? Just give me the number(s)."
 
 If the user picks a number, invoke the **job-application-assistant** skill workflow (fit evaluation first, then CV + cover letter if approved).
+
+If the run found many new jobs (roughly 8+), also suggest `/rank` - it batch-scores all new postings against the full fit framework and returns a ranked shortlist, which beats eyeballing a long table. (`/rank` sets the `ranked` and `expired` status values in `seen_jobs.json`; treat both as already-seen for dedup purposes.)
 
 ### Step 6: Update Tracker (Optional)
 

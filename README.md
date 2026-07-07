@@ -79,7 +79,7 @@ claude
 /scrape
 ```
 
-This searches multiple job portals for positions matching your profile, deduplicates results, and presents them sorted by fit. Pick a match to run `/apply` on it directly.
+This searches multiple job portals for positions matching your profile, deduplicates results, and presents them sorted by fit. Pick a match to run `/apply` on it directly — or, when a scrape returns more jobs than you want to eyeball, run `/rank` to batch-score them all against the fit framework and get a ranked shortlist first.
 
 ### 5. Apply to a job
 
@@ -97,8 +97,9 @@ This runs the full workflow: evaluate fit, draft CV + cover letter, review with 
 
 ## Other commands
 
-`/setup`, `/scrape`, and `/apply` form the core workflow. Four more commands extend it once your profile is in place:
+`/setup`, `/scrape`, and `/apply` form the core workflow. Five more commands extend it once your profile is in place:
 
+- **`/rank`** bridges `/scrape` and `/apply`: it batch-scores all newly scraped postings against the fit framework (parallel agents fetch each posting and score the five evaluation dimensions) and returns a ranked shortlist with honest per-job strengths and gaps. Deal-breakers veto, deadlines get urgency flags, dead postings get marked expired. Pick a number and it hands off to the full `/apply` workflow.
 - **`/expand`** enriches your profile by scanning public sources you've already linked in it (GitHub repos, portfolio site, Kaggle, Google Scholar) and looking up syllabi for named courses and certifications. Discovered competencies are added to your profile with a source tag. Useful right after `/setup` to surface skills that documents alone don't make explicit.
 - **`/upskill`** analyzes the gap between your profile and your tracked job postings (or a single posting via `/upskill <URL>`). Produces a prioritized heatmap of skill gaps and a learning plan with web-searched study resources and time estimates. Useful for career planning between applications.
 - **`/add-template`** registers your own LaTeX CV or cover letter template in place of the stock ones. It captures the template's instructions (compile engine, fonts, style rules, page limit), runs a mandatory test compile, and wires the template into `/apply`. See [LaTeX templates](#latex-templates) below.
@@ -118,6 +119,7 @@ ai-job-search/
 │   │   ├── expand.md                  # /expand competency enrichment from documents and online presence
 │   │   ├── add-template.md            # /add-template register custom LaTeX templates
 │   │   ├── add-portal.md              # /add-portal generate a job-portal search skill for your market
+│   │   ├── rank.md                    # /rank triage scraped jobs into a ranked shortlist
 │   │   └── reset.md                   # /reset wipe profile data or documents folder
 │   ├── skills/
 │   │   ├── job-application-assistant/  # Core application skill
