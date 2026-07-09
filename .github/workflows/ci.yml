@@ -53,6 +53,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: python tools/security_guards.py
+      - name: Guard test suite (violations must fail, clean tree must pass)
+        run: python -m unittest tests.test_security_guards -v
 
   dependency-review:
     name: Dependency review (upstream PRs only)
