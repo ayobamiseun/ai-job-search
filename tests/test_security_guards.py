@@ -92,6 +92,20 @@ class PermissionGuardTests(GuardRepoFixture):
         self.assertEqual(result.returncode, 1)
         self.assertIn("invalid JSON", result.stdout)
 
+    def test_malformed_settings_shape_fails_cleanly(self):
+        for data, message in [
+            ([], "top-level JSON value must be an object"),
+            ({"permissions": []}, "permissions must be an object"),
+            ({"permissions": {"allow": "Bash(*)"}}, "permissions.allow must be a list of strings"),
+            ({"permissions": {"allow": [1]}}, "permissions.allow must be a list of strings"),
+        ]:
+            with self.subTest(data=data):
+                self.settings.write_text(json.dumps(data))
+                result = run_guards(self.root)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn(message, result.stdout)
+                self.assertNotIn("Traceback", result.stderr)
+
 
 class GitignoreGuardTests(GuardRepoFixture):
     def test_each_missing_personal_data_rule_fails(self):
@@ -133,6 +147,18 @@ class ManifestGuardTests(GuardRepoFixture):
         result = run_guards(self.root)
         self.assertEqual(result.returncode, 1)
         self.assertIn("trustedDependencies", result.stdout)
+
+    def test_malformed_manifest_shape_fails_cleanly(self):
+        for data, message in [
+            ([], "top-level JSON value must be an object"),
+            ({"name": "example-cli", "scripts": []}, "scripts must be an object"),
+        ]:
+            with self.subTest(data=data):
+                self.write_manifest(data)
+                result = run_guards(self.root)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn(message, result.stdout)
+                self.assertNotIn("Traceback", result.stderr)
 
     def test_benign_scripts_pass(self):
         self.write_manifest(
