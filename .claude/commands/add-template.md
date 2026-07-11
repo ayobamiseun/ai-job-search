@@ -112,7 +112,7 @@ Never register a template without a successful test compile. LaTeX templates tha
    ```
 3. If the compile fails: show the user the relevant error lines, diagnose (missing font file, wrong engine, missing class), fix what you can (e.g. font `Path` values), and re-compile. If the fix needs input only the user has (a missing font file, a license-restricted class), ask for it and wait.
 4. On success, Read the PDF and confirm the layout renders sensibly (no overlapping text, fonts loaded, page count plausible for dummy content). Record any surprises in the manifest's "Known pitfalls".
-5. Delete the scratch files: `_compile_test.tex`, `_compile_test.pdf`, and all `.aux`/`.log`/`.out` artifacts.
+5. Delete the scratch files and generated artifacts for the test compile: `_compile_test.tex`, `_compile_test.pdf`, `_compile_test.aux`, `_compile_test.log`, `_compile_test.out`, `_compile_test.fls`, `_compile_test.fdb_latexmk`, `_compile_test.synctex.gz`, and any other `_compile_test.*` byproducts.
 
 Do not proceed to Step 5 until the test compile passes.
 
