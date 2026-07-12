@@ -9,7 +9,8 @@
 # Deliberately NOT here: live smoke tests of the job-portal CLIs. They hit
 # real portals (network-flaky, and the linkedin-search skill is personal-use
 # only per its own ToS warning - CI-automated requests would violate that).
-# CLIs get typechecked instead; live testing stays a local, on-demand step.
+# CI runs typechecks and the checked-in fixture/mock test suites only; live
+# portal testing stays a local, on-demand step.
 #
 # Security posture: this template ships pre-approved Claude Code permissions
 # and CLI code that every fork user executes, so the security-guards job
@@ -129,8 +130,8 @@ jobs:
           grep -q 'Output written on cover_example.pdf (1 page' cover_letters/cover_example.log \
             || { echo '::error::cover_letters/cover_example.tex no longer compiles to exactly 1 page'; exit 1; }
 
-  cli-typecheck:
-    name: Typecheck ${{ matrix.tool }}
+  cli-checks:
+    name: CLI checks ${{ matrix.tool }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -148,6 +149,14 @@ jobs:
       - run: bun install
         working-directory: .agents/skills/${{ matrix.tool }}/cli
       - run: bun run typecheck
+        working-directory: .agents/skills/${{ matrix.tool }}/cli
+      - name: Run fixture/mock tests when present
+        run: |
+          if find tests -type f -name '*.test.ts' | grep -q .; then
+            bun test
+          else
+            echo "No Bun tests found for ${{ matrix.tool }}; skipping"
+          fi
         working-directory: .agents/skills/${{ matrix.tool }}/cli
 
   placeholder-integrity:
