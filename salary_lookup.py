@@ -43,6 +43,46 @@ STRIP_PATTERNS = [
 ]
 
 
+def fail_data_error(message):
+    """Exit with a user-facing salary data setup error."""
+    print(f"Error: invalid salary_data.json: {message}", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("See tools/README_SALARY_TOOL.md for the expected format.", file=sys.stderr)
+    sys.exit(1)
+
+
+def validate_data(data):
+    """Validate the salary data shape before lookups use it."""
+    if not isinstance(data, dict):
+        fail_data_error("top-level JSON value must be an object")
+
+    metadata = data.get("metadata", {})
+    if metadata is not None and not isinstance(metadata, dict):
+        fail_data_error("'metadata' must be an object when provided")
+
+    companies = data.get("companies")
+    if not isinstance(companies, list):
+        fail_data_error("'companies' must be a list")
+
+    for index, entry in enumerate(companies, start=1):
+        if not isinstance(entry, dict):
+            fail_data_error(f"companies[{index}] must be an object")
+
+        company = entry.get("company")
+        if not isinstance(company, str) or not company.strip():
+            fail_data_error(f"companies[{index}].company must be a non-empty string")
+
+        city = entry.get("city")
+        if city is not None and not isinstance(city, str):
+            fail_data_error(f"companies[{index}].city must be a string when provided")
+
+        categories = entry.get("categories", {})
+        if categories is not None and not isinstance(categories, dict):
+            fail_data_error(f"companies[{index}].categories must be an object when provided")
+
+    return data
+
+
 def load_data():
     if not DATA_FILE.exists():
         print("Error: salary_data.json not found.", file=sys.stderr)
@@ -53,8 +93,12 @@ def load_data():
         print("If you don't have salary data, the salary lookup", file=sys.stderr)
         print("step will be skipped during /apply.", file=sys.stderr)
         sys.exit(1)
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as exc:
+        fail_data_error(f"invalid JSON at line {exc.lineno}, column {exc.colno}: {exc.msg}")
+    return validate_data(data)
 
 
 def normalize(s):
